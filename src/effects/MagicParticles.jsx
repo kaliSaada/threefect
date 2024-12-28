@@ -39,6 +39,11 @@ function MagicParticles({
     const environmentRef = useRef(null);
 
     useEffect(() => {
+        // Se já existir environmentRef.current, não cria de novo
+        if (environmentRef.current) {
+            return;
+        }
+
         const manager = new THREE.LoadingManager();
         let particleTexture = null;
 
@@ -51,6 +56,7 @@ function MagicParticles({
         return () => {
             if (environmentRef.current) {
                 environmentRef.current.dispose();
+                environmentRef.current = null; // zera a referência após dispose
             }
         };
     }, [particleTextureUrl]);

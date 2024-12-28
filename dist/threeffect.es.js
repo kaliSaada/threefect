@@ -14243,12 +14243,14 @@ function qd({
 }) {
   const o = qs(null), l = qs(null);
   Po(() => {
+    if (l.current)
+      return;
     const d = new vo();
     let f = null;
     return d.onLoad = function() {
       l.current = new c(f);
     }, f = new tc(d).load(e), () => {
-      l.current && l.current.dispose();
+      l.current && (l.current.dispose(), l.current = null);
     };
   }, [e]);
   class c {
