@@ -3,16 +3,16 @@ import { MagicParticles } from 'threeffect';
 
 function App() {
     return (
-        <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
-            <MagicParticles
-                imageUrl="https://picsum.photos/id/237/400/300" // URL da imagem usada para as partículas
-                particleSize={4} // Tamanho das partículas
-                particleArea={60000} // Área de interação
-                particleAmount={50000} // Quantidade de partículas
-                ease={0.3} // Velocidade de relaxamento das partículas
-                style={{ width: '100%', height: '100%' }} // Estilo do container
-            />
-        </div>
+        <MagicParticles
+            imageUrl="https://picsum.photos/id/237/400/300"
+            particleSize={4}
+            particleArea={60000}
+            particleAmount={80000}
+            ease={0.3}
+            cameraConfig={{ fov: 75, near: 0.1, far: 2000, position: [0, 0, 400] }}
+            backgroundColor={0x000000}
+            style={{ width: '100%', height: '600px' }}
+        />
     );
 }
 
