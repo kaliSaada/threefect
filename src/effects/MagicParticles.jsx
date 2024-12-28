@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import * as THREE from 'three';
 
 // Shaders
@@ -40,19 +40,23 @@ function MagicParticles({
     const containerRef = useRef(null);
     const environmentRef = useRef(null);
 
-    useEffect(() => {
-        if (environmentRef.current) {
-            return;
-        }
+    const setupEnvironment = useCallback(() => {
+        if (environmentRef.current) return;
 
         const manager = new THREE.LoadingManager();
         let particleTexture = null;
 
-        manager.onLoad = function () {
-            environmentRef.current = new Environment(particleTexture);
+        manager.onLoad = () => {
+            if (!environmentRef.current) {
+                environmentRef.current = new Environment(particleTexture);
+            }
         };
 
         particleTexture = new THREE.TextureLoader(manager).load(particleTextureUrl);
+    }, [particleTextureUrl]);
+
+    useEffect(() => {
+        setupEnvironment();
 
         return () => {
             if (environmentRef.current) {
@@ -60,12 +64,17 @@ function MagicParticles({
                 environmentRef.current = null;
             }
         };
-    }, [particleTextureUrl]);
+    }, [setupEnvironment]);
 
     class Environment {
         constructor(particle) {
             this.particle = particle;
             this.container = containerRef.current;
+
+            if (!this.container) {
+                console.error("Container not available for Three.js environment.");
+                return;
+            }
 
             this.scene = new THREE.Scene();
             this.scene.background = new THREE.Color(backgroundColor);
@@ -86,7 +95,8 @@ function MagicParticles({
         }
 
         bindEvents() {
-            window.addEventListener('resize', this.onWindowResize.bind(this));
+            this.onWindowResize = this.onWindowResize.bind(this);
+            window.addEventListener('resize', this.onWindowResize);
         }
 
         createCamera() {
@@ -107,7 +117,10 @@ function MagicParticles({
                 this.container.clientHeight
             );
             this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            this.container.appendChild(this.renderer.domElement);
+
+            if (!this.container.contains(this.renderer.domElement)) {
+                this.container.appendChild(this.renderer.domElement);
+            }
 
             this.renderer.setAnimationLoop(() => {
                 this.render();
@@ -115,11 +128,14 @@ function MagicParticles({
         }
 
         render() {
-            this.createParticles.render();
+            if (this.createParticles) {
+                this.createParticles.render();
+            }
             this.renderer.render(this.scene, this.camera);
         }
 
         onWindowResize() {
+            if (!this.container) return;
             this.camera.aspect =
                 this.container.clientWidth / this.container.clientHeight;
             this.camera.updateProjectionMatrix();
@@ -131,7 +147,27 @@ function MagicParticles({
 
         dispose() {
             window.removeEventListener('resize', this.onWindowResize);
-            this.renderer.dispose();
+
+            if (this.renderer) {
+                this.renderer.dispose();
+            }
+
+            if (this.scene) {
+                this.scene.traverse((object) => {
+                    if (object.geometry) object.geometry.dispose();
+                    if (object.material) {
+                        if (Array.isArray(object.material)) {
+                            object.material.forEach((mat) => mat.dispose());
+                        } else {
+                            object.material.dispose();
+                        }
+                    }
+                });
+            }
+
+            if (this.container && this.renderer.domElement) {
+                this.container.removeChild(this.renderer.domElement);
+            }
         }
     }
 
