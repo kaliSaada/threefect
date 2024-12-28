@@ -33,13 +33,14 @@ function MagicParticles({
                             particleArea = 50000,
                             particleAmount = 100000,
                             ease = 0.5,
+                            cameraConfig = { fov: 65, near: 1, far: 10000, position: [0, 0, 800] },
+                            backgroundColor = 0x222222,
                             style = {},
                         }) {
     const containerRef = useRef(null);
     const environmentRef = useRef(null);
 
     useEffect(() => {
-        // Se já existir environmentRef.current, não cria de novo
         if (environmentRef.current) {
             return;
         }
@@ -56,7 +57,7 @@ function MagicParticles({
         return () => {
             if (environmentRef.current) {
                 environmentRef.current.dispose();
-                environmentRef.current = null; // zera a referência após dispose
+                environmentRef.current = null;
             }
         };
     }, [particleTextureUrl]);
@@ -67,7 +68,7 @@ function MagicParticles({
             this.container = containerRef.current;
 
             this.scene = new THREE.Scene();
-            this.scene.background = new THREE.Color(0x222222);
+            this.scene.background = new THREE.Color(backgroundColor);
 
             this.createCamera();
             this.createRenderer();
@@ -89,13 +90,14 @@ function MagicParticles({
         }
 
         createCamera() {
+            const { fov, near, far, position } = cameraConfig;
             this.camera = new THREE.PerspectiveCamera(
-                65,
+                fov,
                 this.container.clientWidth / this.container.clientHeight,
-                1,
-                10000
+                near,
+                far
             );
-            this.camera.position.set(0, 0, 800);
+            this.camera.position.set(...position);
         }
 
         createRenderer() {
