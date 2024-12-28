@@ -1,0 +1,30 @@
+{
+  "name": "threefect",
+  "version": "1.0.0",
+  "description": "Threeffect is a JavaScript library that brings together advanced visual effects for Three.js. Featuring a straightforward and intuitive API, it streamlines the application of post-processing, shaders, and animations in your 3D projects—making immersive visual experiences faster and easier to develop.",
+  "main": "dist/threeffect.umd.js",
+  "module": "dist/threeffect.es.js",
+  "scripts": {
+    "build:lib": "vite build",
+    "prepare:example": "vite build && yarn --cwd example",
+    "start": "yarn run prepare:example && yarn --cwd example dev"
+  },
+  "keywords": [
+    "three.js",
+    "effects",
+    "3D",
+    "threeffect"
+  ],
+  "author": "kaliSaada",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.171.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "vite": "^6.0.6"
+  },
+  "files": ["dist"]
+}
