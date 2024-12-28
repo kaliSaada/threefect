@@ -29,10 +29,7 @@ Cada efeito está disponível como um módulo separado. Exemplos de efeitos disp
 
 - [**MagicParticles**](./effects/MagicParticles.md): Um sistema avançado de partículas interativas.
 
-<video controls>
-  <source src="./effects/magicparticles.mp4" type="video/mp4">
-  Seu navegador não suporta a reprodução de vídeos.
-</video>
+![Demonstração do MagicParticles](./effects/magicparticles.gif)
 
 Cada efeito possui seu próprio README com instruções específicas.
 
